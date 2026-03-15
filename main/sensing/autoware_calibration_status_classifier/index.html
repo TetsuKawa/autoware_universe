@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../../docs/assets/images/autoware-foundation.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.3">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.5">
     
     
       
@@ -23126,6 +23126,13 @@
 <td>integer</td>
 <td>The queue size in synchronized callbacks.</td>
 <td>5</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td>ego_box</td>
+<td>array</td>
+<td>Ego vehicle bounding box in lidar frame [x_min, y_min, z_min, x_max, y_max, z_max]. Used to generate an occlusion mask that prevents projecting LiDAR points through the vehicle chassis onto the image. Set all values to 0.0 to disable.</td>
+<td>[0.0, 0.0, 0.0, 0.0, 0.0, 0.0]</td>
 <td>N/A</td>
 </tr>
 <tr>
