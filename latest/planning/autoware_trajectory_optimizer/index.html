@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../../docs/assets/images/autoware-foundation.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.3">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.5">
     
     
       
@@ -22789,6 +22789,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#design-specification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Design Specification
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#qp-smoother" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -22918,6 +22929,10 @@
 <ul>
 <li><strong>Trajectory Extender positioning</strong>: The trajectory extender has known discontinuity issues when placed early in the pipeline. It negatively affects the QP solver results and introduces artifacts. For this reason, it has been moved to near the end of the pipeline and is <strong>disabled by default</strong> (<code>use_trajectory_extender: false</code>). Fixing the extender's discontinuity issues is future work.</li>
 </ul>
+<h2 id="design-specification">Design Specification<a class="headerlink" href="#design-specification" title="Permanent link">#</a></h2>
+<p>For a detailed description of the optimizer's core assumptions, the constant-dt contract,
+how velocity and acceleration are derived from positions, plugin pipeline specification, and
+known limitations, see <a href="docs/trajectory_optimizer_specification/">docs/trajectory_optimizer_specification.md</a>.</p>
 <h2 id="qp-smoother">QP Smoother<a class="headerlink" href="#qp-smoother" title="Permanent link">#</a></h2>
 <p>The QP smoother uses quadratic programming (OSQP solver) to optimize trajectory paths with advanced features:</p>
 <ul>
@@ -23041,11 +23056,25 @@
 <td>≥0</td>
 </tr>
 <tr>
+<td>trajectory_point_fixer.stop_detection_velocity_threshold_mps</td>
+<td>float</td>
+<td>Velocity threshold used by the stop-detection logic: points whose speed falls below this value while decelerating are treated as stop candidates by both the cluster-based and velocity-profile-based detectors [m/s]</td>
+<td>0.3</td>
+<td>≥0</td>
+</tr>
+<tr>
 <td>trajectory_kinematic_feasibility.max_yaw_rate_rad_s</td>
 <td>float</td>
 <td>Maximum yaw rate [rad/s]. Default: 0.7 rad/s (~40 deg/s) aligns with MPC controller. Typical range: 0.5-1.0 for autonomous vehicles.</td>
 <td>0.7</td>
 <td>≥0.1<br>≤2.0</td>
+</tr>
+<tr>
+<td>trajectory_kinematic_feasibility.time_step_s</td>
+<td>float</td>
+<td>Time step for kinematic feasibility enforcement [s]. Default: 0.1 s.</td>
+<td>0.1</td>
+<td>≥0.01<br>≤1.0</td>
 </tr>
 <tr>
 <td>trajectory_mpt_optimizer.corridor_width_m</td>
