@@ -14,16 +14,13 @@
 #pragma once
 
 #include <autoware_utils_rclcpp/polling_subscriber.hpp>
-#include <diagnostic_updater/diagnostic_updater.hpp>
 #include <rclcpp/rclcpp.hpp>
-#include <redundancy_switcher_interface_base/plugin/event_gateway.hpp>
-#include <redundancy_switcher_interface_base/plugin/i_adapter_plugin.hpp>
+#include <redundancy_switcher_interface/plugin/event_gateway.hpp>
+#include <redundancy_switcher_interface/plugin/i_adapter_plugin.hpp>
 
 #include <autoware_adapi_v1_msgs/msg/operation_mode_state.hpp>
 #include <autoware_vehicle_msgs/msg/control_mode_report.hpp>
 #include <autoware_vehicle_msgs/msg/velocity_report.hpp>
-#include <diagnostic_msgs/msg/diagnostic_status.hpp>
-#include <std_msgs/msg/string.hpp>
 #include <std_srvs/srv/set_bool.hpp>
 #include <tier4_external_api_msgs/srv/reset_redundancy_switcher.hpp>
 #include <tier4_system_msgs/msg/command_mode_availability.hpp>
@@ -44,8 +41,6 @@ using SetBool = std_srvs::srv::SetBool;
 using ResetRedundancySwitcher = tier4_external_api_msgs::srv::ResetRedundancySwitcher;
 using VelocityReport = autoware_vehicle_msgs::msg::VelocityReport;
 using ControlModeReport = autoware_vehicle_msgs::msg::ControlModeReport;
-using DiagnosticStatus = diagnostic_msgs::msg::DiagnosticStatus;
-using DiagStatusWrapper = diagnostic_updater::DiagnosticStatusWrapper;
 using OperationModeState = autoware_adapi_v1_msgs::msg::OperationModeState;
 
 /**
@@ -53,9 +48,8 @@ using OperationModeState = autoware_adapi_v1_msgs::msg::OperationModeState;
  *
  * 責任:
  *   - Autoware からの ROS メッセージを InputEvent に変換して Processor へ投入
- *   - Processor が返した OutputCommands を CommandBus 経由で配信
- *   - SendSubsystemCommand / PublishSubsystemStatusCommand のみ execute() で処理
- *   - 非同期管理（タイムアウト監視、診断更新）
+ *   - UpdateActiveControlUnitCommand を処理して ActiveControlUnit を publish
+ *   - 診断は DiagAdapter（集約ステータス）と SwitcherAdapter（switcher 固有 diag）が担当
  */
 class SubSystemAdapter : public IAdapterPlugin
 {
@@ -64,7 +58,6 @@ public:
   ~SubSystemAdapter() override = default;
 
   void initialize(rclcpp::Node * node, std::shared_ptr<EventGateway> gateway) override;
-
   void execute(const OutputCommand & command) override;
 
 private:
@@ -80,11 +73,10 @@ private:
   void on_reset_request(
     const ResetRedundancySwitcher::Request::SharedPtr request,
     ResetRedundancySwitcher::Response::SharedPtr response);
-
   void on_velocity_report(const VelocityReport::ConstSharedPtr msg);
   void on_control_mode_report(const ControlModeReport::ConstSharedPtr msg);
 
-  // ── Sub ECU ERROR
+  // ── Sub ECU ERROR 検出 ──────────────────────────────────────────────────
   void check_sub_ecu_error(const CommandModeAvailability::ConstSharedPtr msg);
 
   // ── タイムアウト監視 ────────────────────────────────────────────────────
@@ -92,44 +84,6 @@ private:
 
   // ── エフェクト実行 ──────────────────────────────────────────────────────
   void send_active_control_unit(const UpdateActiveControlUnitCommand & command);
-
-  // ── 診断 ───────────────────────────────────────────────────────────────
-  void update_redundancy_switcher_status_diag(DiagStatusWrapper & stat);
-  void update_main_ecu_fault_diag(DiagStatusWrapper & stat);
-  void update_sub_ecu_fault_diag(DiagStatusWrapper & stat);
-  void update_main_vcu_fault_diag(DiagStatusWrapper & stat);
-  void update_sub_vcu_fault_diag(DiagStatusWrapper & stat);
-  void update_main_ecu_to_sub_ecu_link_fault_diag(DiagStatusWrapper & stat);
-  void update_main_ecu_to_main_vcu_link_fault_diag(DiagStatusWrapper & stat);
-  void update_main_ecu_to_sub_vcu_link_fault_diag(DiagStatusWrapper & stat);
-  void update_sub_ecu_to_main_vcu_link_fault_diag(DiagStatusWrapper & stat);
-  void update_sub_ecu_to_sub_vcu_link_fault_diag(DiagStatusWrapper & stat);
-  void update_main_vcu_to_sub_vcu_link_fault_diag(DiagStatusWrapper & stat);
-
-  /// notification_diags から指定キーのレベルを取得し、OK/ERROR で stat を更新する。
-  /// テスト容易性のため gateway_ のみに依存し、ROS 型には依存しない。
-  void update_fault_diag(
-    DiagStatusWrapper & stat, const std::string & key, const std::string & healthy_msg,
-    const std::string & fault_msg) const;
-
-  // ── ユーティリティ ─────────────────────────────────────────────────────
-
-  // inline
-  inline auto to_ros_level(DiagLevelIR level)
-  {
-    switch (level) {
-      case DiagLevelIR::Ok:
-        return DiagnosticStatus::OK;
-      case DiagLevelIR::Warn:
-        return DiagnosticStatus::WARN;
-      case DiagLevelIR::Error:
-        return DiagnosticStatus::ERROR;
-      case DiagLevelIR::Stale:
-        return DiagnosticStatus::STALE;
-      default:
-        return DiagnosticStatus::ERROR;
-    }
-  }
 
   // ── メンバ変数 ─────────────────────────────────────────────────────────
   rclcpp::Node * node_{nullptr};
@@ -143,9 +97,6 @@ private:
   std::optional<CommandModeRequest> last_command_mode_request_;
   std::optional<rclcpp::Time> stamp_another_ecu_availability_;
   bool is_another_ecu_availability_timeout_{false};
-
-  // Diagnostics
-  std::unique_ptr<diagnostic_updater::Updater> updater_;
 
   // Publishers
   rclcpp::Publisher<ActiveControlUnit>::SharedPtr pub_active_control_unit_;
@@ -163,3 +114,4 @@ private:
 };
 
 }  // namespace redundancy_switcher
+

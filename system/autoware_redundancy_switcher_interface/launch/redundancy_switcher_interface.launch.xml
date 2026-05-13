@@ -1,0 +1,76 @@
+<launch>
+  <!-- =====================================================================
+       autoware_redundancy_switcher_interface.launch.xml
+       Launches one RedundancySwitcherInterface node.
+       Switcher-plugin-specific config must be passed via plugin_config arg.
+       ===================================================================== -->
+
+  <!-- true: Main ECU, false: Sub ECU
+       Affects node name and default reset service. -->
+  <arg name="is_main_ecu" default="true"/>
+
+  <!-- Set false for non-redundant (single-ECU) systems.
+       When false, switcher_plugin is not loaded. -->
+  <arg name="is_redundant" default="true"/>
+
+  <!-- Base parameters: is_redundant, switcher_plugin class name, diag timeouts.
+       Override to use a different base config. -->
+  <arg name="base_config"
+    default="$(find-pkg-share autoware_redundancy_switcher_interface)/config/default.param.yaml"/>
+
+  <!-- Plugin-specific parameters (UDS paths, is_main_ecu, timeouts, switcher_plugin class name).
+       Defaults to the built-in SwitcherAdapter config from autoware_redundancy_switcher_interface_plugin.
+       Override to use a custom plugin or config. -->
+  <let name="default_plugin_config"
+    value="$(find-pkg-share autoware_redundancy_switcher_interface_plugin)/config/main.param.yaml"
+    if="$(var is_main_ecu)"/>
+  <let name="default_plugin_config"
+    value="$(find-pkg-share autoware_redundancy_switcher_interface_plugin)/config/sub.param.yaml"
+    unless="$(var is_main_ecu)"/>
+  <arg name="plugin_config" default="$(var default_plugin_config)"/>
+
+  <!-- Input topics -->
+  <arg name="input_velocity"                   default="/vehicle/status/velocity_status"/>
+  <arg name="input_control_mode"               default="/vehicle/status/control_mode"/>
+  <arg name="input_operation_mode_state"       default="/system/operation_mode/state"/>
+  <arg name="input_command_mode_request"       default="/system/command_mode/request"/>
+  <arg name="input_command_mode_availability"  default="/system/command_mode/availability"/>
+
+  <!-- Output topics -->
+  <arg name="output_active_control_unit" default="/system/redundancy/active_control_unit"/>
+
+  <!-- Services -->
+  <arg name="service_set_initializing"
+    default="/system/redundancy_switcher_interface/set_initializing"/>
+  <let name="default_service_reset"
+    value="/system/election/reset_main_ecu" if="$(var is_main_ecu)"/>
+  <let name="default_service_reset"
+    value="/system/election/reset_sub_ecu" unless="$(var is_main_ecu)"/>
+  <arg name="service_reset" default="$(var default_service_reset)"/>
+
+  <!-- Node name prefix -->
+  <let name="node_name_prefix" value="main_ecu" if="$(var is_main_ecu)"/>
+  <let name="node_name_prefix" value="sub_ecu"  unless="$(var is_main_ecu)"/>
+
+  <node pkg="autoware_redundancy_switcher_interface"
+        exec="redundancy_switcher_interface_node"
+        name="$(var node_name_prefix)_redundancy_switcher_interface"
+        output="screen">
+
+    <param name="is_redundant" value="$(var is_redundant)"/>
+    <param from="$(var base_config)"/>
+    <param from="$(var plugin_config)"/>
+
+    <remap from="~/input/velocity"                  to="$(var input_velocity)"/>
+    <remap from="~/input/control_mode"              to="$(var input_control_mode)"/>
+    <remap from="~/input/operation_mode_state"      to="$(var input_operation_mode_state)"/>
+    <remap from="~/input/command_mode_request"      to="$(var input_command_mode_request)"/>
+    <remap from="~/input/command_mode_availability" to="$(var input_command_mode_availability)"/>
+
+    <remap from="~/output/active_control_unit" to="$(var output_active_control_unit)"/>
+
+    <remap from="~/set_initializing" to="$(var service_set_initializing)"/>
+    <remap from="~/service/reset"    to="$(var service_reset)"/>
+  </node>
+</launch>
+
