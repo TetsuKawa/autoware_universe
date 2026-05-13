@@ -1,0 +1,14 @@
+<library path="autoware_redundancy_switcher_interface">
+  <class
+    name="redundancy_switcher::SwitcherAdapter"
+    type="redundancy_switcher::SwitcherAdapter"
+    base_class_type="redundancy_switcher::IAdapterPlugin">
+    <description>Switcher adapter plugin for redundancy switcher interface.</description>
+  </class>
+  <class
+    name="redundancy_switcher::SubSystemAdapter"
+    type="redundancy_switcher::SubSystemAdapter"
+    base_class_type="redundancy_switcher::IAdapterPlugin">
+    <description>Subsystem adapter plugin for redundancy switcher interface.</description>
+  </class>
+</library>

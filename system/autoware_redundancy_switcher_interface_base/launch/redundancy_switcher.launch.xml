@@ -1,0 +1,18 @@
+<launch>
+  <arg name="config" default="$(find-pkg-share redundancy_switcher_interface_base)/config/default.param.yaml"/>
+
+  <!-- Topic and Service Names -->
+  <arg name="~/input/autoware_diagnostic" default="/system/redundancy/autoware_diagnostic"/>
+  <arg name="~/input/switcher_request" default="/system/redundancy/switcher_request"/>
+  <arg name="~/output/status" default="/system/redundancy/status"/>
+  <arg name="~/output/control" default="/system/redundancy/control"/>
+
+  <!-- Launch the redundancy switcher interface node (plugin-based) -->
+  <node pkg="redundancy_switcher_interface_base" exec="redundancy_switcher_interface_node">
+    <param from="$(var config)"/>
+    <remap from="~/input/autoware_diagnostic" to="$(var ~/input/autoware_diagnostic)"/>
+    <remap from="~/input/switcher_request" to="$(var ~/input/switcher_request)"/>
+    <remap from="~/output/status" to="$(var ~/output/status)"/>
+    <remap from="~/output/control" to="$(var ~/output/control)"/>
+  </node>
+</launch>
