@@ -56,6 +56,7 @@ This feature breaks the generality of the graph and may be changed to a plugin o
 | `input_qos_depth`                 | `uint`    | QoS depth of input array topic.            |
 | `graph_qos_depth`                 | `uint`    | QoS depth of output graph topic.           |
 | `use_operation_mode_availability` | `bool`    | Use operation mode availability publisher. |
+| `initializing_on_startup`         | `bool`    | Start the graph in the initializing state. |
 
 ## Examples
 

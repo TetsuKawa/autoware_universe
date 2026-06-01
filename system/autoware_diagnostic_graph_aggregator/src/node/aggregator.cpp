@@ -31,6 +31,9 @@ AggregatorNode::AggregatorNode(const rclcpp::NodeOptions & options) : Node("aggr
     std::ostringstream id;
     id << std::hex << stamp.nanoseconds();
     graph_ = std::make_unique<Graph>(graph_file, id.str(), nullptr);
+    if (declare_parameter<bool>("initializing_on_startup")) {
+      graph_->set_initializing(true);
+    }
   }
 
   // Init plugins.
