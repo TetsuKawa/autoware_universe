@@ -1,0 +1,55 @@
+<launch>
+  <arg name="config_file"   default="$(find-pkg-share autoware_redundancy_service_divider)/config/redundancy_service_divider.param.yaml"/>
+  <arg name="is_redundant" default="true"/>
+
+  <arg name="input_change_operation_mode"   default="/system/operation_mode/change_operation_mode"/>
+  <arg name="input_change_autoware_control" default="/system/operation_mode/change_autoware_control"/>
+  <arg name="input_reset_mrm"               default="/system/mrm/reset"/>
+
+  <arg name="output_change_operation_mode_main"   default="/system/redundancy_service_divider/change_operation_mode"/>
+  <arg name="output_change_operation_mode_sub"    default="/to_mrm/system/redundancy_service_divider/change_operation_mode"/>
+  <arg name="output_change_autoware_control_main" default="/system/redundancy_service_divider/change_autoware_control"/>
+  <arg name="output_change_autoware_control_sub"  default="/to_mrm/system/redundancy_service_divider/change_autoware_control"/>
+  <arg name="output_reset_diag_graph_main"        default="/system/redundancy_service_divider/diagnostics_graph/reset"/>
+  <arg name="output_reset_diag_graph_sub"         default="/to_mrm/system/redundancy_service_divider/diagnostics_graph/reset"/>
+  <arg name="output_reset_redundancy_switcher_main" default="/system/redundancy_service_divider/redundancy_switcher/reset"/>
+  <arg name="output_reset_redundancy_switcher_sub"  default="/to_mrm/system/redundancy_service_divider/redundancy_switcher/reset"/>
+
+  <arg name="input_localization_initialization_state" default="/api/localization/initialization_state"/>
+  <arg name="input_route_state"                       default="/api/routing/state"/>
+  <arg name="input_operation_mode_state"              default="/api/operation_mode/state"/>
+
+  <arg name="output_set_aggregator_initializing_main"                    default="/system/aggregator/set_initializing"/>
+  <arg name="output_set_aggregator_initializing_sub"                     default="/to_mrm/system/aggregator/set_initializing"/>
+  <arg name="output_set_redundancy_switcher_interface_initializing_main" default="/system/redundancy_switcher_interface/set_initializing"/>
+  <arg name="output_set_redundancy_switcher_interface_initializing_sub"  default="/to_mrm/system/redundancy_switcher_interface/set_initializing"/>
+
+  <node pkg="autoware_redundancy_service_divider" exec="autoware_redundancy_service_divider_node" name="autoware_redundancy_service_divider" output="screen">
+    <param from="$(var config_file)"/>
+    <param name="is_redundant" value="$(var is_redundant)"/>
+
+    <remap from="~/input/change_operation_mode"        to="$(var input_change_operation_mode)"/>
+    <remap from="~/output/change_operation_mode/main"  to="$(var output_change_operation_mode_main)"/>
+    <remap from="~/output/change_operation_mode/sub"   to="$(var output_change_operation_mode_sub)"/>
+
+    <remap from="~/input/change_autoware_control"       to="$(var input_change_autoware_control)"/>
+    <remap from="~/output/change_autoware_control/main" to="$(var output_change_autoware_control_main)"/>
+    <remap from="~/output/change_autoware_control/sub"  to="$(var output_change_autoware_control_sub)"/>
+
+    <remap from="~/input/reset_mrm"                        to="$(var input_reset_mrm)"/>
+    <remap from="~/output/reset_diag_graph/main"           to="$(var output_reset_diag_graph_main)"/>
+    <remap from="~/output/reset_diag_graph/sub"            to="$(var output_reset_diag_graph_sub)"/>
+    <remap from="~/output/reset_redundancy_switcher/main"  to="$(var output_reset_redundancy_switcher_main)"/>
+    <remap from="~/output/reset_redundancy_switcher/sub"   to="$(var output_reset_redundancy_switcher_sub)"/>
+
+    <remap from="~/input/localization_initialization_state" to="$(var input_localization_initialization_state)"/>
+    <remap from="~/input/route_state"                       to="$(var input_route_state)"/>
+    <remap from="~/input/operation_mode_state"              to="$(var input_operation_mode_state)"/>
+
+    <remap from="~/output/set_aggregator_initializing/main" to="$(var output_set_aggregator_initializing_main)"/>
+    <remap from="~/output/set_aggregator_initializing/sub"  to="$(var output_set_aggregator_initializing_sub)"/>
+
+    <remap from="~/output/set_redundancy_switcher_interface_initializing/main" to="$(var output_set_redundancy_switcher_interface_initializing_main)"/>
+    <remap from="~/output/set_redundancy_switcher_interface_initializing/sub"  to="$(var output_set_redundancy_switcher_interface_initializing_sub)"/>
+  </node>
+</launch>

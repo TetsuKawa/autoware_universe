@@ -1,0 +1,40 @@
+// Copyright 2025 The Autoware Contributors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+#ifndef NODE_HPP_
+#define NODE_HPP_
+
+#include "autoware_ready_divider.hpp"
+#include "service_divider.hpp"
+
+#include <rclcpp/rclcpp.hpp>
+
+#include <memory>
+
+namespace autoware::redundancy_service_divider
+{
+
+class RedundancyServiceDivider : public rclcpp::Node
+{
+public:
+  explicit RedundancyServiceDivider(const rclcpp::NodeOptions & node_options);
+
+private:
+  std::unique_ptr<ServiceDivider>       divider_;
+  std::unique_ptr<AutowareReadyDivider> ready_divider_;
+};
+
+}  // namespace autoware::redundancy_service_divider
+
+#endif  // NODE_HPP_
