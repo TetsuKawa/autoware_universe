@@ -25,9 +25,11 @@ namespace autoware::redundancy_service_divider
 {
 
 // Holds a main/sub client pair for one service type.
-// Callback groups are owned by the node internally; no need to store them here.
+// Keep callback groups alongside clients to ensure their lifetime.
 template <typename ServiceT>
 struct ClientPair {
+  rclcpp::CallbackGroup::SharedPtr main_group;
+  rclcpp::CallbackGroup::SharedPtr sub_group;  // nullptr when create_sub=false
   typename rclcpp::Client<ServiceT>::SharedPtr main;
   typename rclcpp::Client<ServiceT>::SharedPtr sub;  // nullptr when create_sub=false
 };
@@ -39,13 +41,15 @@ ClientPair<ServiceT> make_client_pair(
   rclcpp::Node & node, const std::string & service_name, bool create_sub = true)
 {
   ClientPair<ServiceT> pair;
+  pair.main_group = node.create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
   pair.main = node.create_client<ServiceT>(
     "~/output/" + service_name + "/main", rmw_qos_profile_services_default,
-    node.create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive));
+    pair.main_group);
   if (create_sub) {
+    pair.sub_group = node.create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
     pair.sub = node.create_client<ServiceT>(
       "~/output/" + service_name + "/sub", rmw_qos_profile_services_default,
-      node.create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive));
+      pair.sub_group);
   }
   return pair;
 }
