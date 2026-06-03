@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../../../../docs/assets/images/autoware-foundation.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.5">
+      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.6">
     
     
       
@@ -961,6 +961,8 @@
       
         
       
+        
+      
     
     
     
@@ -1145,6 +1147,34 @@
     
   
     autoware_point_types
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../common/autoware_boundary_departure_checker" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Boundary Departure Checker
   
 
     
@@ -1466,10 +1496,10 @@
         
           
         
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1_3_14" >
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1_3_15" >
         
           
-          <label class="md-nav__link" for="__nav_1_3_14" id="__nav_1_3_14_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_1_3_15" id="__nav_1_3_15_label" tabindex="0">
             
   
   
@@ -1487,8 +1517,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_1_3_14_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_1_3_14">
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_1_3_15_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_3_15">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -23430,6 +23460,20 @@ Please refer to it for your parameter settings.</p>
 <td>≥0.0<br>≤1.0</td>
 </tr>
 <tr>
+<td>iou_threshold.ANIMAL</td>
+<td>float</td>
+<td>IoU threshold for ANIMAL objects.</td>
+<td>0.1</td>
+<td>≥0.0<br>≤1.0</td>
+</tr>
+<tr>
+<td>iou_threshold.HAZARD</td>
+<td>float</td>
+<td>IoU threshold for HAZARD objects.</td>
+<td>0.1</td>
+<td>≥0.0<br>≤1.0</td>
+</tr>
+<tr>
 <td>remove_unknown</td>
 <td>boolean</td>
 <td>If this parameter is true, all of objects labeled UNKNOWN will be removed in post-process.</td>
@@ -23461,16 +23505,16 @@ Please refer to it for your parameter settings.</p>
 </table>
 <h3 id="example-configuration">Example Configuration<a class="headerlink" href="#example-configuration" title="Permanent link">#</a></h3>
 <p>The <code>iou_threshold</code> parameter should be configured as an object with thresholds for each object class:</p>
-<div class="highlight"><pre><span></span><code><span class="nt">iou_threshold</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">UNKNOWN</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.1</span>
-<span class="w">  </span><span class="nt">CAR</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.65</span>
-<span class="w">  </span><span class="nt">TRUCK</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.65</span>
-<span class="w">  </span><span class="nt">BUS</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.65</span>
-<span class="w">  </span><span class="nt">TRAILER</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.65</span>
-<span class="w">  </span><span class="nt">MOTORCYCLE</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.65</span>
-<span class="w">  </span><span class="nt">BICYCLE</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.65</span>
-<span class="w">  </span><span class="nt">PEDESTRIAN</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.65</span>
-</code></pre></div>
+<p><code>yaml
+iou_threshold:
+  UNKNOWN: 0.1
+  CAR: 0.65
+  TRUCK: 0.65
+  BUS: 0.65
+  TRAILER: 0.65
+  MOTORCYCLE: 0.65
+  BICYCLE: 0.65
+  PEDESTRIAN: 0.65</code></p>
 <p>The threshold values determine the minimum IoU score required to overwrite a cluster's label with the corresponding ROI label. Different thresholds can be set for each object class to account for varying detection characteristics.</p>
 <h2 id="assumptions-known-limits">Assumptions / Known limits<a class="headerlink" href="#assumptions-known-limits" title="Permanent link">#</a></h2>
 <!-- Write assumptions and limitations of your implementation.

@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../../docs/assets/images/autoware-foundation.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.5">
+      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.6">
     
     
       
@@ -961,6 +961,8 @@
       
         
       
+        
+      
     
     
     
@@ -1145,6 +1147,34 @@
     
   
     autoware_point_types
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../common/autoware_boundary_departure_checker" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Boundary Departure Checker
   
 
     
@@ -1466,10 +1496,10 @@
         
           
         
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1_3_14" >
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1_3_15" >
         
           
-          <label class="md-nav__link" for="__nav_1_3_14" id="__nav_1_3_14_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_1_3_15" id="__nav_1_3_15_label" tabindex="0">
             
   
   
@@ -1487,8 +1517,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_1_3_14_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_1_3_14">
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_1_3_15_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_3_15">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -23110,7 +23140,7 @@ Autoware installs it automatically in its setup script. If needed, the user can 
 <tr>
 <td><code>~/input/image*</code></td>
 <td><code>sensor_msgs::msg::Image</code></td>
-<td>Input image topics.</td>
+<td>Input image topics. The image is assumed to be RGB8 encoding.</td>
 </tr>
 <tr>
 <td><code>~/input/camera_info*</code></td>
@@ -23257,6 +23287,13 @@ Autoware installs it automatically in its setup script. If needed, the user can 
 <td>N/A</td>
 </tr>
 <tr>
+<td>run_image_undistortion</td>
+<td>boolean</td>
+<td>A flag to run image undistortion.</td>
+<td>True</td>
+<td>N/A</td>
+</tr>
+<tr>
 <td>circle_nms_dist_threshold</td>
 <td>float</td>
 <td>A distance threshold between detections in NMS.</td>
@@ -23285,11 +23322,46 @@ Autoware installs it automatically in its setup script. If needed, the user can 
 <td>N/A</td>
 </tr>
 <tr>
-<td>score_threshold</td>
-<td>float</td>
-<td>A threshold value of confidence score, all of objects with score less than this threshold are ignored.</td>
-<td>0.2</td>
-<td>≥0.0</td>
+<td>detection_score_thresholds.distance_bin_upper_limits</td>
+<td>array</td>
+<td>An array of upper bounds of each distance bin.</td>
+<td>[50.0, 90.0, 121.0, 200.0]</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td>min_confidence_scores.CAR</td>
+<td>array</td>
+<td>A minimum confidence score for CAR in each distance bin.</td>
+<td>[0.1, 0.1, 0.1, 0.1]</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td>min_confidence_scores.TRUCK</td>
+<td>array</td>
+<td>A minimum confidence score for TRUCK in each distance bin.</td>
+<td>[0.1, 0.1, 0.1, 0.1]</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td>min_confidence_scores.BUS</td>
+<td>array</td>
+<td>A minimum confidence score for BUS in each distance bin.</td>
+<td>[0.1, 0.1, 0.1, 0.1]</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td>min_confidence_scores.BICYCLE</td>
+<td>array</td>
+<td>A minimum confidence score for BICYCLE in each distance bin.</td>
+<td>[0.1, 0.1, 0.1, 0.1]</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td>min_confidence_scores.PEDESTRIAN</td>
+<td>array</td>
+<td>A minimum confidence score for PEDESTRIAN in each distance bin.</td>
+<td>[0.1, 0.1, 0.1, 0.1]</td>
+<td>N/A</td>
 </tr>
 </tbody>
 </table>
@@ -23505,17 +23577,17 @@ Autoware installs it automatically in its setup script. If needed, the user can 
 </table>
 <h3 id="the-build_only-option">The <code>build_only</code> option<a class="headerlink" href="#the-build_only-option" title="Permanent link">#</a></h3>
 <p>The <code>autoware_bevfusion</code> node has a <code>build_only</code> option to build the TensorRT engine file from the specified ONNX file, after which the program exits.</p>
-<div class="highlight"><pre><span></span><code>ros2<span class="w"> </span>launch<span class="w"> </span>autoware_bevfusion<span class="w"> </span>bevfusion.launch.xml<span class="w"> </span>build_only:<span class="o">=</span><span class="nb">true</span>
-</code></pre></div>
+<p><code>bash
+ros2 launch autoware_bevfusion bevfusion.launch.xml build_only:=true</code></p>
 <h3 id="the-log_level-option">The <code>log_level</code> option<a class="headerlink" href="#the-log_level-option" title="Permanent link">#</a></h3>
 <p>The default logging severity level for <code>autoware_bevfusion</code> is <code>info</code>. For debugging purposes, the developer may decrease severity level using <code>log_level</code> parameter:</p>
-<div class="highlight"><pre><span></span><code>ros2<span class="w"> </span>launch<span class="w"> </span>autoware_bevfusion<span class="w"> </span>bevfusion.launch.xml<span class="w"> </span>log_level:<span class="o">=</span>debug
-</code></pre></div>
+<p><code>bash
+ros2 launch autoware_bevfusion bevfusion.launch.xml log_level:=debug</code></p>
 <h2 id="assumptions-known-limits">Assumptions / Known limits<a class="headerlink" href="#assumptions-known-limits" title="Permanent link">#</a></h2>
 <p>This node assumes that the input pointcloud follows the <code>PointXYZIRC</code> layout defined in <code>autoware_point_types</code>.</p>
 <h2 id="trained-models">Trained Models<a class="headerlink" href="#trained-models" title="Permanent link">#</a></h2>
 <p>You can download the onnx and config files in the following links.
-The files need to be placed inside <code>$(env HOME)/autoware_data/bevfusion</code></p>
+The files need to be placed inside <code>$(env HOME)/autoware_data/ml_models/bevfusion</code></p>
 <ul>
 <li>lidar-only model:<ul>
 <li><a href="https://awf.ml.dev.web.auto/perception/models/bevfusion/t4base_120m/v1/bevfusion_lidar.onnx">onnx</a></li>
