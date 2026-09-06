@@ -12,7 +12,7 @@
   <node pkg="autoware_mrm_in_lane_stop_operator" exec="autoware_mrm_in_lane_stop_operator_node" name="mrm_in_lane_stop_operator">
     <param from="$(var config)"/>
     <param name="skip_relay_call" value="$(var skip_relay_call)"/>
-    
+
     <remap from="~/input/driving_mode_request" to="$(var driving_mode_request_topic)"/>
     <remap from="~/input/driving_mode_info" to="$(var driving_mode_info_topic)"/>
     <remap from="~/input/relay_service" to="$(var relay_service_name)"/>

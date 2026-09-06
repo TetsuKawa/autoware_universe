@@ -14,8 +14,8 @@
 
 #include "mrm_in_lane_stop_operator.hpp"
 
-#include <cmath>
 #include <chrono>
+#include <cmath>
 
 namespace autoware::mrm_in_lane_stop_operator
 {
@@ -45,8 +45,8 @@ MrmInLaneStopOperator::MrmInLaneStopOperator(const rclcpp::NodeOptions & node_op
     relay_service_name_, rmw_qos_profile_services_default, relay_group_);
 
   // publisher
-  pub_trigger_ =
-    create_publisher<ConstantJerkDecelerationTrigger>("~/output/jerk_deceleration_trigger", rclcpp::QoS{1});
+  pub_trigger_ = create_publisher<ConstantJerkDecelerationTrigger>(
+    "~/output/jerk_deceleration_trigger", rclcpp::QoS{1});
   pub_mrm_state_ = create_publisher<DrivingModeMrmState>("~/output/mrm_state", 1);
   pub_driving_mode_active_ = create_publisher<DrivingModeFlag>("~/output/driving_mode_active", 1);
   sub_request_ = create_subscription<DrivingModeRequest>(
@@ -103,7 +103,8 @@ void MrmInLaneStopOperator::on_request(DrivingModeRequest::ConstSharedPtr msg)
     if (skip_relay_call_ || execute(*requested)) {
       active_mode_id_ = requested_id;
       // For real-time safety, we should only publish the active flag
-      // After switching the active_mode_id_ to the new mode, so that the published flag is consistent with the internal state.
+      // After switching the active_mode_id_ to the new mode, so that the published flag is
+      // consistent with the internal state.
       publishDrivingModeActive();
     } else {
       RCLCPP_WARN(
@@ -157,8 +158,8 @@ bool MrmInLaneStopOperator::call_relay(bool relay_on)
 {
   if (!relay_client_->service_is_ready()) {
     RCLCPP_WARN(
-      get_logger(), "Service unavailable: %s (relay_on=%s)",
-      relay_client_->get_service_name(), relay_on ? "true" : "false");
+      get_logger(), "Service unavailable: %s (relay_on=%s)", relay_client_->get_service_name(),
+      relay_on ? "true" : "false");
     return false;
   }
 
@@ -167,8 +168,7 @@ bool MrmInLaneStopOperator::call_relay(bool relay_on)
 
   auto future = relay_client_->async_send_request(request);
   if (
-    future.wait_for(std::chrono::milliseconds(service_timeout_ms_)) !=
-    std::future_status::ready) {
+    future.wait_for(std::chrono::milliseconds(service_timeout_ms_)) != std::future_status::ready) {
     RCLCPP_WARN(
       get_logger(), "Timeout waiting for relay service: %s", relay_client_->get_service_name());
     return false;

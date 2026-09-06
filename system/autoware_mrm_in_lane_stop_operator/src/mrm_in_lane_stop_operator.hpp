@@ -15,19 +15,20 @@
 #ifndef MRM_IN_LANE_STOP_OPERATOR_HPP_
 #define MRM_IN_LANE_STOP_OPERATOR_HPP_
 
-#include <optional>
-#include <string>
-#include <vector>
-
 #include <autoware_utils_rclcpp/polling_subscriber.hpp>
-#include <nav_msgs/msg/odometry.hpp>
 #include <rclcpp/rclcpp.hpp>
+
+#include <nav_msgs/msg/odometry.hpp>
 #include <tier4_control_msgs/msg/constant_jerk_deceleration_trigger.hpp>
 #include <tier4_system_msgs/msg/driving_mode_flag.hpp>
 #include <tier4_system_msgs/msg/driving_mode_info.hpp>
 #include <tier4_system_msgs/msg/driving_mode_mrm_state.hpp>
 #include <tier4_system_msgs/msg/driving_mode_request.hpp>
 #include <tier4_system_msgs/srv/change_topic_relay_control.hpp>
+
+#include <optional>
+#include <string>
+#include <vector>
 
 namespace autoware::mrm_in_lane_stop_operator
 {

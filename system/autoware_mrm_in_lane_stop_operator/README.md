@@ -45,6 +45,7 @@ In the MRM decision flow:
 ### Input/Output
 
 #### Subscriptions
+
 - `/localization/kinematic_state` (nav_msgs/Odometry)
   - Vehicle odometry used for stop detection (polling, not callback-based)
 - `~/input/driving_mode_request` (tier4_system_msgs/DrivingModeRequest)
@@ -53,6 +54,7 @@ In the MRM decision flow:
   - Current driving mode status information
 
 #### Publishers
+
 - `~/output/mrm_state` (tier4_system_msgs/DrivingModeMrmState)
   - MRM operation state (UNKNOWN, NORMAL, OPERATING, SUCCEEDED)
 - `~/output/jerk_deceleration_trigger` (tier4_control_msgs/ConstantJerkDecelerationTrigger)
@@ -61,6 +63,7 @@ In the MRM decision flow:
   - Flags indicating active status for each configured driving mode
 
 #### Service Clients
+
 - Relay control service (default: `/system/topic_relay_controller_trajectory/operate`)
   - Used to enable/disable the constant jerk deceleration trigger
 
@@ -81,6 +84,7 @@ In the MRM decision flow:
 ```
 
 **State Descriptions:**
+
 - `UNKNOWN`: Initial state before any mode request
 - `NORMAL`: Mode is inactive (requested_mode_id is not set)
 - `OPERATING`: Mode is active and vehicle is still moving
@@ -89,6 +93,7 @@ In the MRM decision flow:
 ### Relay Service Integration
 
 The node communicates with a relay controller service to enable/disable the constant jerk deceleration topic routing. On mode activation:
+
 1. Calls the relay service with `enable=true`
 2. Only updates internal `active_mode_id_` if the relay service call succeeds
 3. On mode deactivation, calls relay with `enable=false`
@@ -99,26 +104,29 @@ This ensures that if the relay service is unavailable, the node does not incorre
 
 ### Launch Arguments
 
-| Argument | Type | Default | Description |
-|----------|------|---------|-------------|
-| `jerk_deceleration_trigger_topic` | string | `/control/constant_jerk_deceleration_trigger` | Topic for jerk deceleration trigger |
-| `relay_service_name` | string | `/system/topic_relay_controller_trajectory/operate` | Service name for relay control |
+| Argument                          | Type   | Default                                             | Description                         |
+| --------------------------------- | ------ | --------------------------------------------------- | ----------------------------------- |
+| `jerk_deceleration_trigger_topic` | string | `/control/constant_jerk_deceleration_trigger`       | Topic for jerk deceleration trigger |
+| `relay_service_name`              | string | `/system/topic_relay_controller_trajectory/operate` | Service name for relay control      |
 
 ### Parameters (YAML)
 
 **Global Parameters:**
+
 - `mode_names` (list of strings): Names of driving modes to manage
 - `service_timeout_ms` (int): Timeout for relay service calls [ms]
 
 **Per-Mode Parameters:**
 Each mode in `mode_names` has a configuration block:
+
 ```yaml
 <mode_name>:
-  target_acceleration: <double>  # Target acceleration [m/s²]
-  target_jerk: <double>          # Target jerk [m/s³]
+  target_acceleration: <double> # Target acceleration [m/s²]
+  target_jerk: <double> # Target jerk [m/s³]
 ```
 
 **Example:**
+
 ```yaml
 /**:
   ros__parameters:
