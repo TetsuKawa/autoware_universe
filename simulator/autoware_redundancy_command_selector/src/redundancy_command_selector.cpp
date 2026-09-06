@@ -32,59 +32,20 @@ RedundancyCommandSelector::RedundancyCommandSelector(const rclcpp::NodeOptions &
   pub_hazard_ = create_publisher<HazardLightsCommand>("~/output/hazard_lights_command", qos);
   pub_turn_ = create_publisher<TurnIndicatorsCommand>("~/output/turn_indicators_command", qos);
 
-  sub_main_control_ = create_subscription<Control>(
-    "~/input/main/control_command", qos, [this](const Control::ConstSharedPtr & msg) {
-      if (use_main_) {
-        pub_control_->publish(*msg);
-      }
-    });
-  sub_main_gear_ = create_subscription<GearCommand>(
-    "~/input/main/gear_command", qos, [this](const GearCommand::ConstSharedPtr & msg) {
-      if (use_main_) {
-        pub_gear_->publish(*msg);
-      }
-    });
-  sub_main_hazard_ = create_subscription<HazardLightsCommand>(
-    "~/input/main/hazard_lights_command", qos,
-    [this](const HazardLightsCommand::ConstSharedPtr & msg) {
-      if (use_main_) {
-        pub_hazard_->publish(*msg);
-      }
-    });
-  sub_main_turn_ = create_subscription<TurnIndicatorsCommand>(
-    "~/input/main/turn_indicators_command", qos,
-    [this](const TurnIndicatorsCommand::ConstSharedPtr & msg) {
-      if (use_main_) {
-        pub_turn_->publish(*msg);
-      }
-    });
+  sub_main_control_ =
+    create_relay<Control>("~/input/main/control_command", qos, pub_control_, true);
+  sub_main_gear_ = create_relay<GearCommand>("~/input/main/gear_command", qos, pub_gear_, true);
+  sub_main_hazard_ =
+    create_relay<HazardLightsCommand>("~/input/main/hazard_lights_command", qos, pub_hazard_, true);
+  sub_main_turn_ = create_relay<TurnIndicatorsCommand>(
+    "~/input/main/turn_indicators_command", qos, pub_turn_, true);
 
-  sub_sub_control_ = create_subscription<Control>(
-    "~/input/sub/control_command", qos, [this](const Control::ConstSharedPtr & msg) {
-      if (!use_main_) {
-        pub_control_->publish(*msg);
-      }
-    });
-  sub_sub_gear_ = create_subscription<GearCommand>(
-    "~/input/sub/gear_command", qos, [this](const GearCommand::ConstSharedPtr & msg) {
-      if (!use_main_) {
-        pub_gear_->publish(*msg);
-      }
-    });
-  sub_sub_hazard_ = create_subscription<HazardLightsCommand>(
-    "~/input/sub/hazard_lights_command", qos,
-    [this](const HazardLightsCommand::ConstSharedPtr & msg) {
-      if (!use_main_) {
-        pub_hazard_->publish(*msg);
-      }
-    });
-  sub_sub_turn_ = create_subscription<TurnIndicatorsCommand>(
-    "~/input/sub/turn_indicators_command", qos,
-    [this](const TurnIndicatorsCommand::ConstSharedPtr & msg) {
-      if (!use_main_) {
-        pub_turn_->publish(*msg);
-      }
-    });
+  sub_sub_control_ = create_relay<Control>("~/input/sub/control_command", qos, pub_control_, false);
+  sub_sub_gear_ = create_relay<GearCommand>("~/input/sub/gear_command", qos, pub_gear_, false);
+  sub_sub_hazard_ =
+    create_relay<HazardLightsCommand>("~/input/sub/hazard_lights_command", qos, pub_hazard_, false);
+  sub_sub_turn_ = create_relay<TurnIndicatorsCommand>(
+    "~/input/sub/turn_indicators_command", qos, pub_turn_, false);
 
   sub_active_control_unit_ = create_subscription<ActiveControlUnit>(
     "~/input/active_control_unit", rclcpp::QoS(1).transient_local(),

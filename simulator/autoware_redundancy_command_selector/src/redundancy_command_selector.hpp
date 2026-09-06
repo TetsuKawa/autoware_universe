@@ -25,6 +25,7 @@
 
 #include <atomic>
 #include <cstdint>
+#include <string>
 
 namespace autoware::simulator::redundancy_command_selector
 {
@@ -57,6 +58,21 @@ private:
   rclcpp::Subscription<TurnIndicatorsCommand>::SharedPtr sub_sub_turn_;
 
   rclcpp::Subscription<ActiveControlUnit>::SharedPtr sub_active_control_unit_;
+
+  // Creates a subscription that relays the received message to the given publisher
+  // only while the active ECU matches `active_when_use_main`.
+  template <class MsgT>
+  typename rclcpp::Subscription<MsgT>::SharedPtr create_relay(
+    const std::string & topic, const rclcpp::QoS & qos,
+    const typename rclcpp::Publisher<MsgT>::SharedPtr & pub, const bool active_when_use_main)
+  {
+    return create_subscription<MsgT>(
+      topic, qos, [this, pub, active_when_use_main](const typename MsgT::ConstSharedPtr & msg) {
+        if (use_main_ == active_when_use_main) {
+          pub->publish(*msg);
+        }
+      });
+  }
 
   std::atomic<bool> use_main_{true};
   uint8_t main_ecu_id_;
