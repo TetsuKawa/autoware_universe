@@ -12,7 +12,7 @@ This package also manages the launch file for the Sub ECU adapi container (`Hear
 
 ## Architecture
 
-```
+```text
                active_control_unit
                       │
         ┌─────────────┴─────────────┐
