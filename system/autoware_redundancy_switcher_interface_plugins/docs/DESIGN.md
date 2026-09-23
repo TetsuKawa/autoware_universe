@@ -5,7 +5,7 @@
 This document covers `SimpleSwitcherAdapter`, the **desktop mock** adapter in this package.
 
 In production, ECU leader election is performed by dedicated switching hardware
-([redundancy_switcher](https://github.com/tier4/redundancy_switcher)) and communicated via UDS
+(redundancy_switcher, a private repository) and communicated via UDS
 sockets using `RedundancySwitcherAdapter`. On a development machine or in CI, that hardware and its
 protocol are unavailable. `SimpleSwitcherAdapter` provides a ROS-topic-based substitute that
 implements the same `SwitcherSignals` contract without any hardware dependency.
