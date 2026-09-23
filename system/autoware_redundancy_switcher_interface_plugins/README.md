@@ -6,7 +6,7 @@ This package provides three adapters that can be loaded at runtime via pluginlib
 
 | Adapter                       | Use case                                                                                            |
 | ----------------------------- | --------------------------------------------------------------------------------------------------- |
-| `RedundancySwitcherAdapter`   | Production: connects to redundancy_switcher (private repository) via UDS |
+| `RedundancySwitcherAdapter`   | Production: connects to [redundancy_switcher](https://github.com/tier4/redundancy_switcher) via UDS |
 | `SimpleSwitcherAdapter`       | Development / CI: topic-based mock switcher, no hardware required                                   |
 | `NonRedundantSwitcherAdapter` | Single-ECU systems with no hardware switcher                                                        |
 
@@ -18,7 +18,7 @@ by the interface package config (`autoware_redundancy_switcher_interface/config/
 
 ## RedundancySwitcherAdapter
 
-UDS-based adapter for redundancy_switcher (private repository).
+UDS-based adapter for [redundancy_switcher](https://github.com/tier4/redundancy_switcher).
 Translates between the `ElectionRequest` / `ElectionStatus` protocol and the
 `SwitcherSignals` / `ActiveControlUnit` abstraction used by the framework.
 
